@@ -80,6 +80,10 @@ public class MCAClient {
             Minecraft.getInstance().setScreen(new SkinLibraryScreen());
         }
 
+        if(KeyBindings.VILLAGER_TRADE.consumeClick()) {
+            
+        }
+
         SpeechManager.INSTANCE.tick(client);
     }
 

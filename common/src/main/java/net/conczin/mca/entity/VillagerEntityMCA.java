@@ -2,6 +2,7 @@ package net.conczin.mca.entity;
 
 import com.mojang.serialization.Dynamic;
 import net.conczin.mca.Config;
+import net.conczin.mca.KeyBindings;
 import net.conczin.mca.MCA;
 import net.conczin.mca.MCAClient;
 import net.conczin.mca.client.model.CommonVillagerModel;
@@ -433,6 +434,12 @@ public class VillagerEntityMCA extends Villager implements VillagerLike<Villager
                && stack.getItem() != ItemsMCA.POTION_OF_MASCULINITY;
     }
 
+    public void OpenTradeScreen(Player player) {
+        if (!level().isClientSide && canTradeWithProfession()) {
+            startTrading(player);
+        }
+    }
+
     @Override
     public final InteractionResult interactAt(Player player, Vec3 pos, @NotNull InteractionHand hand) {
         // This allows hitbox interactions to be ignored if the player is carrying a child villager.
@@ -444,7 +451,9 @@ public class VillagerEntityMCA extends Villager implements VillagerLike<Villager
             //make sure dialogueType is synced in case the client needs it
             getDialogueType(player);
 
-            if (player.isShiftKeyDown()) {
+            //KeyBindings.SKIN_LIBRARY.consumeClick() //player.isShiftKeyDown()
+            if (KeyBindings.VILLAGER_TRADE.consumeClick()) {
+                // using villager_trade keybind with shift will require to specify left or right click
                 if (!level().isClientSide && canTradeWithProfession()) {
                     getInteractions().stopInteracting();
                     startTrading(player);

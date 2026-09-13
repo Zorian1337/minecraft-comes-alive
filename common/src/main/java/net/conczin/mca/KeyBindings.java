@@ -11,6 +11,8 @@ public class KeyBindings {
     public static final List<KeyMapping> list = new LinkedList<>();
 
     public static final KeyMapping SKIN_LIBRARY = newKey("skin_library", GLFW.GLFW_KEY_U);
+    public static final KeyMapping VILLAGER_TRADE = newKey("villager_trade", GLFW.GLFW_KEY_R);
+
 
     private static KeyMapping newKey(String name, int code) {
         KeyMapping key = new KeyMapping(
@@ -22,4 +24,5 @@ public class KeyBindings {
         list.add(key);
         return key;
     }
+
 }
