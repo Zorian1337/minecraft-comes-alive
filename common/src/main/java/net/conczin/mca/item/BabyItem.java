@@ -29,6 +29,7 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -112,7 +113,19 @@ public class BabyItem extends Item {
 
     @Override
     public InteractionResult useOn(UseOnContext context) {
-        return InteractionResult.PASS;
+
+        // handle baby logic first then stop secondary block placement
+
+        Player player = context.getPlayer();
+        if (player == null) {
+            return InteractionResult.PASS;
+        }
+
+        Level world = context.getLevel();
+        InteractionResultHolder<ItemStack> BabyResult = HandleBabyInteract(world, player, context.getHand());
+        
+        return BabyResult.getResult();
+
     }
 
     public boolean onDropped(ItemStack stack, Player player) {
@@ -160,6 +173,10 @@ public class BabyItem extends Item {
 
     @Override
     public final InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
+        return HandleBabyInteract(world, player, hand);
+    }
+
+    public InteractionResultHolder<ItemStack> HandleBabyInteract(Level world, Player player, InteractionHand hand){
         ItemStack stack = player.getItemInHand(hand);
 
         if (world.isClientSide) {
@@ -171,7 +188,7 @@ public class BabyItem extends Item {
             if (player instanceof ServerPlayer serverPlayer) {
                 Network.sendToPlayer(new OpenGuiRequest(OpenGuiRequest.Type.BABY_NAME), serverPlayer);
             }
-            return InteractionResultHolder.pass(stack);
+            return InteractionResultHolder.pass(stack); // doing .pass allows offhand item placement
         }
 
         // Not old enough
@@ -179,7 +196,7 @@ public class BabyItem extends Item {
             if (player instanceof ServerPlayer serverPlayer) {
                 serverPlayer.displayClientMessage(Component.translatable("item.mca.baby.not_ready"), true);
             }
-            return InteractionResultHolder.pass(stack);
+            return InteractionResultHolder.pass(stack); // doing .pass allows offhand item placement
         }
 
         // Name is good and we're ready to grow
